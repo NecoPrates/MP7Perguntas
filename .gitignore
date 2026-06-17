@@ -1,1 +1,8 @@
 .DS_Store
+
+# Build outputs
+dist/
+releases/
+electron/dist/
+electron/node_modules/
+
