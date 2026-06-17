@@ -1,0 +1,12 @@
+{
+  "name": "mp7perguntas-electron",
+  "version": "0.1.0",
+  "description": "MP7Perguntas — Electron wrapper for the 7-step planner",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^26.0.0"
+  }
+}

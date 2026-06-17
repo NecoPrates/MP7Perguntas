@@ -1,0 +1,4 @@
+#!/bin/zsh
+APP_ROOT="${0:A:h}/../.."
+HTML_FILE="$APP_ROOT/Elaborador de Prompt MP Consultoria.html"
+open "$HTML_FILE"

@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MP Consultoria · Perguntas Estratégicas</title>
+<style>
+  :root{
+    --bg:#f6f1e8;
+    --panel:#fffaf2;
+    --panel2:#f4eadf;
+    --line:#dccdb8;
+    --text:#201813;
+    --muted:#6f6255;
+    --accent:#8a5a2b;
+    --accent2:#315c50;
+    --ok:#2d6a43;
+    --shadow:0 18px 42px rgba(62,41,18,.12);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    min-height:100vh;
+    font-family:"Avenir Next","Segoe UI","Helvetica Neue",Arial,sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(138,90,43,.14), transparent 26%),
+      radial-gradient(circle at top right, rgba(49,92,80,.14), transparent 24%),
+      linear-gradient(180deg,#fbf7f1 0%, var(--bg) 100%);
+  }
+  .shell{max-width:1240px;margin:0 auto;padding:24px}
+  .topbar,.hero,.panel,.side-card{border:1px solid var(--line);background:rgba(255,250,242,.88);box-shadow:var(--shadow)}
+  .topbar{
+    border-radius:26px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand-mark{
+    width:50px;height:50px;border-radius:16px;display:grid;place-items:center;
+    color:#fff;font-size:22px;font-weight:800;
+    background:linear-gradient(135deg,var(--accent),#b57a43);
+  }
+  .brand-title{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .brand-sub{margin-top:3px;font-size:13px;line-height:1.4;color:var(--muted)}
+  .pill{padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.72);font-size:13px;font-weight:700;color:var(--muted)}
+  .hero{margin-top:18px;border-radius:30px;padding:22px}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.75fr);gap:18px;align-items:start}
+  .hero h1{margin:0;font-size:clamp(30px,4vw,52px);line-height:1.02;letter-spacing:-.04em}
+  .hero p{margin:14px 0 0;max-width:780px;color:var(--muted);font-size:15px;line-height:1.8}
+  .hero-card{padding:16px;border-radius:22px;border:1px solid var(--line);background:rgba(255,255,255,.86)}
+  .hero-card h2{margin:0 0 8px;font-size:14px;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em}
+  .hero-card ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.8;font-size:14px}
+  .hero-right{display:grid;gap:18px}
+  .company-card{padding:16px;border-radius:22px;border:1px solid var(--line);background:rgba(255,255,255,.86)}
+  .hero-grid .company-card{grid-column:1 / -1}
+  .company-card h2{margin:0 0 10px;font-size:14px;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em}
+  .company-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .company-block{display:flex;flex-direction:column;gap:8px}
+  .company-card .field{margin-top:14px}
+  .company-card .hint{margin-top:10px}
+  .company-card input{width:100%}
+  @media (max-width:980px){.hero-right{grid-template-columns:1fr}.company-grid{grid-template-columns:1fr}}
+  .layout{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(310px,.82fr);gap:18px;margin-top:18px}
+  @media (max-width:980px){.layout,.hero-grid{grid-template-columns:1fr}}
+  .panel{border-radius:30px;overflow:hidden}
+  .panel-head{padding:18px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(244,234,223,.55))}
+  .panel-title{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+  .panel-title h3{margin:0;font-size:18px}
+  .step-count{font-size:12px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:.1em}
+  .progress{margin-top:14px;height:10px;border-radius:999px;overflow:hidden;background:#efe2d4;border:1px solid rgba(185,159,127,.35)}
+  .progress > div{height:100%;width:14.285%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s ease}
+  .step-nav{display:flex;gap:8px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.35)}
+  .step-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font:inherit;font-size:12px;font-weight:800;color:var(--muted);cursor:pointer;transition:transform .15s ease,border-color .15s ease,color .15s ease,background .15s ease}
+  .step-btn:hover{transform:translateY(-1px);border-color:#b99f7f}
+  .step-btn.active{background:linear-gradient(135deg,var(--accent),#b57a43);color:#fff;border-color:transparent}
+  .step-btn.done{background:#f3fbf5;color:var(--ok);border-color:rgba(45,106,67,.2)}
+  .content{padding:20px}
+  .step{display:none;animation:fade .18s ease}
+  .step.active{display:block}
+  @keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  .step-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);font-size:12px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em}
+  .step h4{margin:14px 0 8px;font-size:26px;line-height:1.08;letter-spacing:-.03em}
+  .step p{margin:0 0 16px;color:var(--muted);line-height:1.75;font-size:14px}
+  .field{margin-bottom:14px}
+  label{display:block;margin-bottom:7px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent2)}
+  input,textarea{width:100%;border:1px solid var(--line);border-radius:16px;background:#fff;color:var(--text);padding:12px 14px;font:inherit;outline:none;transition:border-color .15s ease,box-shadow .15s ease}
+  textarea{min-height:128px;resize:vertical;line-height:1.65}
+  input:focus,textarea:focus{border-color:#b99f7f;box-shadow:0 0 0 4px rgba(138,90,43,.10)}
+  .hint{margin-top:8px;font-size:12px;color:var(--muted);line-height:1.6}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:transform .15s ease,background .15s ease,border-color .15s ease}
+  .chip:hover{transform:translateY(-1px);background:#f9f4ee;border-color:#b99f7f}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .btn{border:none;border-radius:14px;padding:12px 16px;font:inherit;font-weight:800;cursor:pointer;transition:transform .15s ease,opacity .15s ease,box-shadow .15s ease}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#b57a43);color:#fff;box-shadow:0 12px 24px rgba(138,90,43,.18)}
+  .btn-secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+  .btn-soft{background:#f7efe4;color:var(--accent2);border:1px solid rgba(49,92,80,.15)}
+  .small{padding:10px 14px;font-size:13px}
+  .nav-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+  .nav-left,.nav-right{display:flex;gap:10px;flex-wrap:wrap}
+  .status{min-height:20px;font-size:13px;color:var(--muted);margin-top:12px}
+  .status.ok{color:var(--ok);font-weight:700}
+  .status.err{color:#b04b3d;font-weight:700}
+  .side-stack{display:grid;gap:18px}
+  .side-card{border-radius:30px;padding:18px 20px}
+  .side-card h3{margin:0 0 10px;font-size:18px}
+  .side-card p{margin:0;color:var(--muted);line-height:1.72;font-size:14px}
+  .summary-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+  .summary-item{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:#fff}
+  .summary-item .k{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:11px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  .summary-item .v{font-size:13px;line-height:1.65;color:var(--text)}
+  .list{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+  .list li{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.76);display:flex;justify-content:space-between;gap:12px;align-items:start}
+  .list strong{display:block;font-size:14px;margin-bottom:4px}
+  .list span{font-size:12px;color:var(--muted);line-height:1.55}
+  .badge{font-size:11px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em;padding:6px 10px;border-radius:999px;background:#eef6f3;border:1px solid rgba(49,92,80,.18);white-space:nowrap}
+  .result-wrap{margin-top:16px;border-top:1px solid var(--line);padding-top:16px;display:none}
+  .result-wrap.show{display:block}
+  .result-box{width:100%;min-height:180px;border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;white-space:pre-wrap;line-height:1.75;font-size:14px;color:var(--text)}
+  .footer{padding:18px 8px 6px;text-align:center;color:var(--muted);font-size:12px;line-height:1.7}
+  .mini-note{font-size:12px;color:var(--muted);line-height:1.6}
+  .swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .swot-grid textarea{min-height:92px}
+  @media (max-width:720px){.swot-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">MP</div>
+      <div>
+        <div class="brand-title">Perguntas Estratégicas</div>
+        <div class="brand-sub">Assistente passo a passo para montar um plano estratégico em texto corrido</div>
+      </div>
+    </div>
+    <div class="pill">7 campos · visão, missão, valores, SWOT e execução</div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <h1>Monte um plano estratégico sem complicar.</h1>
+        <p>
+          Esta página segue as instruções do arquivo de entrada e conduz você por 7 etapas. No final, ela junta tudo em um texto corrido, simples e direto, pronto para copiar ou usar como base para a IA.
+        </p>
+      </div>
+      <div class="hero-right">
+        <div class="hero-card">
+          <h2>Como usar</h2>
+          <ul>
+            <li>Preencha um passo por vez.</li>
+            <li>Use linguagem simples e curta.</li>
+            <li>Na última etapa, clique em montar.</li>
+            <li>Copie o texto pronto e ajuste se quiser.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="company-card">
+          <h2>Dados do exercício</h2>
+          <div class="company-grid">
+            <div class="company-block">
+              <label for="companyName">Nome da empresa</label>
+              <input id="companyName" type="text" placeholder="Ex.: Empresa XYZ" />
+            </div>
+            <div class="company-block">
+              <label for="revisionDate">Data da revisão</label>
+              <input id="revisionDate" type="date" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Exercício anterior</label>
+            <div class="toolbar">
+              <button class="btn btn-soft small" id="openFileBtn">Abrir 7Perguntas salvo</button>
+              <input id="previousFile" type="file" accept=".json" style="display:none" />
+            </div>
+            <div class="hint">Selecione um arquivo salvo com “7Perguntas” para continuar. Se quiser, deixe o nome em branco e abra mesmo assim.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="layout">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">
+          <h3>Passo a passo</h3>
+          <div class="step-count" id="stepCount">1 de 7</div>
+        </div>
+        <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+      </div>
+
+      <div class="step-nav" id="stepNav">
+        <button class="step-btn active" data-step="0">1. Visão e Missão</button>
+        <button class="step-btn" data-step="1">2. Valores</button>
+        <button class="step-btn" data-step="2">3. SWOT</button>
+        <button class="step-btn" data-step="3">4. Objetivos</button>
+        <button class="step-btn" data-step="4">5. Estratégias</button>
+        <button class="step-btn" data-step="5">6. Planos de Ação</button>
+        <button class="step-btn" data-step="6">7. Indicadores</button>
+      </div>
+
+      <div class="content">
+        <div class="step active" data-panel="0">
+          <span class="step-badge">Etapa 1</span>
+          <h4>Empresa e revisão</h4>
+          <p>Preencha a visão e missão. Use o bloco de cima para nome da empresa e revisão, e abra um exercício salvo quando quiser continuar.</p>
+          <div class="field">
+            <label for="visaoMissao">Sua visão e missão</label>
+            <textarea id="visaoMissao" placeholder="Ex.: Queremos ser a empresa mais confiável da região e ajudar pequenos negócios a crescer com atendimento próximo."></textarea>
+          </div>
+          <div class="chips">
+            <button class="chip" data-fill="visaoMissao">Crescer com qualidade</button>
+            <button class="chip" data-fill="visaoMissao">Atender melhor o cliente</button>
+            <button class="chip" data-fill="visaoMissao">Ganhar confiança no mercado</button>
+          </div>
+        </div>
+
+        <div class="step" data-panel="1">
+          <span class="step-badge">Etapa 2</span>
+          <h4>Valores</h4>
+          <p>Liste os princípios que guiam o jeito de trabalhar. Se quiser, use linhas curtas ou frases separadas por ponto e vírgula.</p>
+          <div class="field">
+            <label for="valores">Valores da empresa</label>
+            <textarea id="valores" placeholder="Ex.: honestidade, agilidade, respeito, cuidado com o cliente e compromisso com resultado."></textarea>
+          </div>
+          <div class="chips">
+            <button class="chip" data-fill="valores">Honestidade e respeito</button>
+            <button class="chip" data-fill="valores">Compromisso com o cliente</button>
+            <button class="chip" data-fill="valores">Qualidade no que faz</button>
+          </div>
+        </div>
+
+        <div class="step" data-panel="2">
+          <span class="step-badge">Etapa 3</span>
+          <h4>SWOT</h4>
+          <p>Preencha forças, fraquezas, oportunidades e ameaças. Essa parte ajuda a ver o cenário com clareza.</p>
+          <div class="swot-grid">
+            <div class="field">
+              <label for="swotForcas">Forças</label>
+              <textarea id="swotForcas" placeholder="Ex.: equipe experiente, boa reputação, atendimento rápido."></textarea>
+            </div>
+            <div class="field">
+              <label for="swotFraquezas">Fraquezas</label>
+              <textarea id="swotFraquezas" placeholder="Ex.: poucos canais de venda, demora no retorno, processo manual."></textarea>
+            </div>
+            <div class="field">
+              <label for="swotOportunidades">Oportunidades</label>
+              <textarea id="swotOportunidades" placeholder="Ex.: novo mercado, parceria local, mais procura por esse serviço."></textarea>
+            </div>
+            <div class="field">
+              <label for="swotAmeacas">Ameaças</label>
+              <textarea id="swotAmeacas" placeholder="Ex.: concorrência forte, queda de demanda, aumento de custos."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="step" data-panel="3">
+          <span class="step-badge">Etapa 4</span>
+          <h4>Objetivos</h4>
+          <p>Defina o que precisa ser alcançado. Se puder, escreva em termos claros e com prazo.</p>
+          <div class="field">
+            <label for="objetivos">Objetivos principais</label>
+            <textarea id="objetivos" placeholder="Ex.: aumentar vendas, melhorar retenção de clientes e reduzir retrabalho nos próximos 6 meses."></textarea>
+          </div>
+          <div class="chips">
+            <button class="chip" data-fill="objetivos">Aumentar vendas</button>
+            <button class="chip" data-fill="objetivos">Reduzir custos</button>
+            <button class="chip" data-fill="objetivos">Melhorar atendimento</button>
+          </div>
+        </div>
+
+        <div class="step" data-panel="4">
+          <span class="step-badge">Etapa 5</span>
+          <h4>Estratégias</h4>
+          <p>Mostre como os objetivos serão alcançados. Aqui entram as escolhas principais.</p>
+          <div class="field">
+            <label for="estrategias">Estratégias</label>
+            <textarea id="estrategias" placeholder="Ex.: focar no cliente certo, usar ofertas mais simples, melhorar a divulgação e treinar a equipe."></textarea>
+          </div>
+          <div class="chips">
+            <button class="chip" data-fill="estrategias">Focar no cliente certo</button>
+            <button class="chip" data-fill="estrategias">Treinar a equipe</button>
+            <button class="chip" data-fill="estrategias">Melhorar a divulgação</button>
+          </div>
+        </div>
+
+        <div class="step" data-panel="5">
+          <span class="step-badge">Etapa 6</span>
+          <h4>Planos de Ação</h4>
+          <p>Transforme estratégia em tarefa. Escreva o que será feito, por quem e em que ordem.</p>
+          <div class="field">
+            <label for="acoes">Planos de ação</label>
+            <textarea id="acoes" placeholder="Ex.: 1. Criar cronograma. 2. Treinar equipe. 3. Acompanhar os resultados toda semana."></textarea>
+          </div>
+          <div class="chips">
+            <button class="chip" data-fill="acoes">Criar cronograma</button>
+            <button class="chip" data-fill="acoes">Treinar a equipe</button>
+            <button class="chip" data-fill="acoes">Acompanhar toda semana</button>
+          </div>
+        </div>
+
+        <div class="step" data-panel="6">
+          <span class="step-badge">Etapa 7</span>
+          <h4>Indicadores de Desempenho</h4>
+          <p>Escolha os números ou sinais que vão mostrar se o plano está funcionando.</p>
+          <div class="field">
+            <label for="indicadores">Indicadores</label>
+            <textarea id="indicadores" placeholder="Ex.: vendas por mês, taxa de resposta, prazo de entrega e satisfação do cliente."></textarea>
+          </div>
+          <div class="chips">
+            <button class="chip" data-fill="indicadores">Vendas por mês</button>
+            <button class="chip" data-fill="indicadores">Satisfação do cliente</button>
+            <button class="chip" data-fill="indicadores">Prazo de entrega</button>
+          </div>
+
+          <div class="toolbar">
+            <button class="btn btn-primary" id="buildBtn">Montar texto final</button>
+            <button class="btn btn-secondary" id="resetBtn">Limpar tudo</button>
+            <button class="btn btn-soft" id="saveBtn">Salvar rascunho</button>          <button class="btn btn-soft" id="saveFileBtn">Salvar arquivo</button>            <button class="btn btn-secondary" id="closeBtn">Fechar</button>
+          </div>
+          <div class="status" id="status"></div>
+
+          <div class="result-wrap" id="resultWrap">
+            <label for="resultBox">Texto corrido pronto</label>
+            <div class="result-box" id="resultBox"></div>
+            <div class="toolbar">
+              <button class="btn btn-primary small" id="copyBtn">Copiar texto</button>
+              <button class="btn btn-secondary small" id="downloadBtn">Baixar para Downloads</button>
+            </div>
+            <div class="hint">O arquivo será baixado automaticamente para a pasta Downloads do navegador.</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <div class="nav-left">
+            <button class="btn btn-secondary small" id="prevBtn">Anterior</button>
+            <button class="btn btn-secondary small" id="nextBtn">Próximo</button>
+          </div>
+          <div class="nav-right">
+            <span class="mini-note">Dica: você pode navegar pelos passos pela barra de cima.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side-stack">
+      <div class="panel side-card">
+        <h3>Resumo do passo</h3>
+        <p>O painel abaixo mostra o que já foi preenchido. Ele ajuda a revisar antes de gerar o texto final.</p>
+        <div class="summary-grid" id="summaryGrid"></div>
+      </div>
+
+      <div class="panel side-card">
+        <h3>Ordem da construção</h3>
+        <ul class="list">
+          <li><div><strong>1. Visão e Missão</strong><span>Mostra o destino e o motivo.</span></div><span class="badge">Base</span></li>
+          <li><div><strong>2. Valores</strong><span>Define o jeito certo de agir.</span></div><span class="badge">Cultura</span></li>
+          <li><div><strong>3. SWOT</strong><span>Enxerga forças e riscos.</span></div><span class="badge">Análise</span></li>
+          <li><div><strong>4. Objetivos</strong><span>Aponta o que precisa acontecer.</span></div><span class="badge">Meta</span></li>
+          <li><div><strong>5. Estratégias</strong><span>Escolhe o caminho principal.</span></div><span class="badge">Plano</span></li>
+          <li><div><strong>6. Ações</strong><span>Transforma em tarefa prática.</span></div><span class="badge">Execução</span></li>
+          <li><div><strong>7. Indicadores</strong><span>Mostra se está dando certo.</span></div><span class="badge">Medição</span></li>
+        </ul>
+      </div>
+
+      <div class="panel side-card">
+        <h3>Exemplo rápido</h3>
+        <p>"Queremos crescer com atendimento próximo, valorizar a equipe, melhorar vendas e acompanhar o resultado com metas simples, como faturamento mensal e satisfação do cliente."</p>
+      </div>
+    </aside>
+  </section>
+
+  <div class="footer">
+    MP Consultoria · Programa em 7 passos para montar um plano estratégico em texto corrido.
+  </div>
+</div>
+
+<script>
+  const steps = Array.from(document.querySelectorAll('.step'));
+  const navButtons = Array.from(document.querySelectorAll('.step-btn'));
+  const fieldIds = ['companyName', 'revisionDate', 'visaoMissao', 'valores', 'swotForcas', 'swotFraquezas', 'swotOportunidades', 'swotAmeacas', 'objetivos', 'estrategias', 'acoes', 'indicadores'];
+  const labels = [
+    ['Nome da empresa', 'companyName'],
+    ['Data da revisão', 'revisionDate'],
+    ['Visão e Missão', 'visaoMissao'],
+    ['Valores', 'valores'],
+    ['SWOT', 'swotForcas'],
+    ['Objetivos', 'objetivos'],
+    ['Estratégias', 'estrategias'],
+    ['Planos de Ação', 'acoes'],
+    ['Indicadores', 'indicadores']
+  ];
+  const storageKey = 'mp-consultoria-planejador-v1';
+  const statusEl = document.getElementById('status');
+  const resultWrap = document.getElementById('resultWrap');
+  const resultBox = document.getElementById('resultBox');
+  const progressBar = document.getElementById('progressBar');
+  const stepCount = document.getElementById('stepCount');
+  const summaryGrid = document.getElementById('summaryGrid');
+  let currentStep = 0;
+  let builtText = '';
+  const saveFileBtn = document.getElementById('saveFileBtn');
+
+  function byId(id){ return document.getElementById(id); }
+  function valueOf(id){ return byId(id).value.trim(); }
+
+  function renderStepState(){
+    const ratio = ((currentStep + 1) / steps.length) * 100;
+    progressBar.style.width = ratio + '%';
+    stepCount.textContent = (currentStep + 1) + ' de ' + steps.length;
+    steps.forEach((panel, index) => panel.classList.toggle('active', index === currentStep));
+    navButtons.forEach((button, index) => {
+      button.classList.toggle('active', index === currentStep);
+      const filled = index === 0 ? valueOf('visaoMissao') :
+                     index === 1 ? valueOf('valores') :
+                     index === 2 ? (valueOf('swotForcas') || valueOf('swotFraquezas') || valueOf('swotOportunidades') || valueOf('swotAmeacas')) :
+                     index === 3 ? valueOf('objetivos') :
+                     index === 4 ? valueOf('estrategias') :
+                     index === 5 ? valueOf('acoes') :
+                     valueOf('indicadores');
+      button.classList.toggle('done', !!filled && index !== currentStep);
+    });
+    byId('prevBtn').disabled = currentStep === 0;
+    byId('nextBtn').disabled = currentStep === steps.length - 1;
+  }
+
+  function showStep(step){
+    currentStep = Math.max(0, Math.min(step, steps.length - 1));
+    renderStepState();
+  }
+
+  function updateSummary(){
+    const items = labels.map(([label, id]) => ({ label, value: valueOf(id) }));
+    summaryGrid.innerHTML = items.map(item => `
+      <div class="summary-item">
+        <div class="k"><span>${item.label}</span><span>${item.value ? 'Preenchido' : 'Vazio'}</span></div>
+        <div class="v">${item.value || '—'}</div>
+      </div>
+    `).join('');
+  }
+
+  function assembleText(){
+    const parts = [];
+    const companyName = valueOf('companyName');
+    const revisionDate = valueOf('revisionDate');
+    const visaoMissao = valueOf('visaoMissao');
+    const valores = valueOf('valores');
+    const forcas = valueOf('swotForcas');
+    const fraquezas = valueOf('swotFraquezas');
+    const oportunidades = valueOf('swotOportunidades');
+    const ameacas = valueOf('swotAmeacas');
+    const objetivos = valueOf('objetivos');
+    const estrategias = valueOf('estrategias');
+    const acoes = valueOf('acoes');
+    const indicadores = valueOf('indicadores');
+
+    if (!companyName) {
+      statusEl.textContent = 'O campo "Nome da empresa" é obrigatório.';
+      statusEl.className = 'status err';
+      return;
+    }
+
+    if (!revisionDate) {
+      statusEl.textContent = 'O campo "Data da revisão" é obrigatório.';
+      statusEl.className = 'status err';
+      return;
+    }
+
+    parts.push('Empresa: ' + companyName + '.');
+    parts.push('Revisão: ' + revisionDate + '.');
+    if (visaoMissao) parts.push('Visão e missão: ' + visaoMissao + '.');
+    if (valores) parts.push('Valores: ' + valores + '.');
+    if (forcas || fraquezas || oportunidades || ameacas) {
+      const swot = [];
+      if (forcas) swot.push('Forças: ' + forcas);
+      if (fraquezas) swot.push('Fraquezas: ' + fraquezas);
+      if (oportunidades) swot.push('Oportunidades: ' + oportunidades);
+      if (ameacas) swot.push('Ameaças: ' + ameacas);
+      parts.push('SWOT: ' + swot.join(' | ') + '.');
+    }
+    if (objetivos) parts.push('Objetivos: ' + objetivos + '.');
+    if (estrategias) parts.push('Estratégias: ' + estrategias + '.');
+    if (acoes) parts.push('Planos de ação: ' + acoes + '.');
+    if (indicadores) parts.push('Indicadores de desempenho: ' + indicadores + '.');
+
+    builtText = parts.join(' ').replace(/\s+/g, ' ').replace(/\.\s*\./g, '.').trim();
+
+    renderOutputLayout();
+    resultWrap.classList.add('show');
+    statusEl.textContent = 'Texto montado com sucesso.';
+    statusEl.className = 'status ok';
+    saveDraft(false);
+  }
+
+  function saveDraft(showMessage = true){
+    const payload = { currentStep, builtText };
+    fieldIds.forEach(id => payload[id] = valueOf(id));
+    localStorage.setItem(storageKey, JSON.stringify(payload));
+    if (showMessage) {
+      statusEl.textContent = 'Rascunho salvo neste navegador.';
+      statusEl.className = 'status ok';
+    }
+  }
+
+  function loadDraft(){
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      fieldIds.forEach(id => { if (typeof data[id] === 'string') byId(id).value = data[id]; });
+      if (typeof data.currentStep === 'number') currentStep = data.currentStep;
+      if (typeof data.builtText === 'string' && data.builtText.trim()) {
+        builtText = data.builtText.trim();
+        renderOutputLayout();
+        resultWrap.classList.add('show');
+      }
+    } catch (error) {
+      console.warn('Falha ao carregar rascunho', error);
+    }
+  }
+
+  function clearAll(){
+    fieldIds.forEach(id => byId(id).value = '');
+    builtText = '';
+    resultBox.textContent = '';
+    resultWrap.classList.remove('show');
+    statusEl.textContent = 'Campos limpos.';
+    statusEl.className = 'status';
+    localStorage.removeItem(storageKey);
+    showStep(0);
+    updateSummary();
+  }
+
+  function copyText(){
+    if (!builtText) {
+      statusEl.textContent = 'Nada para copiar ainda.';
+      statusEl.className = 'status err';
+      return;
+    }
+    navigator.clipboard.writeText(builtText).then(() => {
+      statusEl.textContent = 'Texto copiado.';
+      statusEl.className = 'status ok';
+    });
+  }
+
+  async function downloadText(){
+    if (!builtText) {
+      statusEl.textContent = 'Monte o texto antes de baixar.';
+      statusEl.className = 'status err';
+      return;
+    }
+    const fileName = (valueOf('companyName') ? valueOf('companyName').replace(/\s+/g,'-') + '-' : '') + '7Perguntas-exercicio.json';
+    const state = fieldIds.reduce((acc, id) => {
+      acc[id] = valueOf(id);
+      return acc;
+    }, {});
+    state.exportedAt = new Date().toISOString();
+
+    if (window.api && window.api.saveFile) {
+      try {
+        const res = await window.api.saveFile(JSON.stringify(state, null, 2), fileName);
+        if (res && res.canceled) {
+          statusEl.textContent = 'Salvamento cancelado.';
+          statusEl.className = 'status';
+        } else if (res && res.path) {
+          statusEl.textContent = 'Arquivo salvo: ' + res.path;
+          statusEl.className = 'status ok';
+        } else if (res && res.error) {
+          statusEl.textContent = 'Erro ao salvar: ' + res.error;
+          statusEl.className = 'status err';
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Erro ao salvar o arquivo.';
+        statusEl.className = 'status err';
+      }
+    } else if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: fileName,
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(JSON.stringify(state, null, 2));
+        await writable.close();
+        statusEl.textContent = 'Arquivo salvo com sucesso.';
+        statusEl.className = 'status ok';
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          statusEl.textContent = 'Salvamento cancelado.';
+          statusEl.className = 'status';
+        } else {
+          console.error(err);
+          statusEl.textContent = 'Erro ao salvar o arquivo.';
+          statusEl.className = 'status err';
+        }
+      }
+    } else {
+      // fallback to download with user confirmation
+      const proceed = confirm('Seu navegador não suporta salvar com escolha de local. Um download será iniciado na pasta padrão (Downloads). Se já existir um arquivo com este nome, o navegador pode renomear. Deseja prosseguir?');
+      if (!proceed) {
+        statusEl.textContent = 'Salvamento cancelado.';
+        statusEl.className = 'status';
+        return;
+      }
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = fileName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+      statusEl.textContent = 'Download iniciado na pasta padrão (Downloads). Se quiser substituir, mova ou renomeie no Finder e salve novamente.';
+      statusEl.className = 'status ok';
+    }
+  }
+
+  function renderOutputLayout(){
+    const layout = fieldIds.map(id => {
+      const value = valueOf(id) || '—';
+      const label = labels.find(item => item[1] === id)[0];
+      return `
+        <div class="summary-item">
+          <div class="k"><span>${label}</span></div>
+          <div class="v">${value.replace(/\n/g, '<br>')}</div>
+        </div>`;
+    }).join('');
+    document.getElementById('resultBox').innerHTML = layout;
+  }
+
+  function getFileName(){
+    const rawName = valueOf('companyName') || 'exercicio';
+    const safeName = rawName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_]/g, '');
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const dateTime = `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}-${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+    return `${safeName}-${dateTime}.json`;
+  }
+
+  function getExportState(){
+    const state = fieldIds.reduce((acc, id) => {
+      acc[id] = valueOf(id);
+      return acc;
+    }, {});
+    state.companyName = valueOf('companyName');
+    state.revisionDate = valueOf('revisionDate');
+    state.exportedAt = new Date().toISOString();
+    return state;
+  }
+
+  async function saveExerciseToFile(){
+    const state = getExportState();
+    const fileName = getFileName();
+
+    if (window.api && window.api.saveFile) {
+      try {
+        const res = await window.api.saveFile(JSON.stringify(state, null, 2), fileName);
+        if (res && res.canceled) {
+          statusEl.textContent = 'Salvamento cancelado.';
+          statusEl.className = 'status';
+        } else if (res && res.path) {
+          statusEl.textContent = 'Arquivo salvo: ' + res.path;
+          statusEl.className = 'status ok';
+        } else if (res && res.error) {
+          statusEl.textContent = 'Erro ao salvar: ' + res.error;
+          statusEl.className = 'status err';
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Erro ao salvar o arquivo.';
+        statusEl.className = 'status err';
+      }
+      return;
+    }
+
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: fileName,
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(JSON.stringify(state, null, 2));
+        await writable.close();
+        statusEl.textContent = 'Arquivo salvo com sucesso.';
+        statusEl.className = 'status ok';
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          statusEl.textContent = 'Salvamento cancelado.';
+          statusEl.className = 'status';
+        } else {
+          console.error(err);
+          statusEl.textContent = 'Erro ao salvar o arquivo.';
+          statusEl.className = 'status err';
+        }
+      }
+      return;
+    }
+
+    const proceed = confirm('Seu navegador não suporta salvar com escolha de local. Um download será iniciado na pasta padrão (Downloads). Se já existir um arquivo com este nome, o navegador pode renomear. Deseja prosseguir?');
+    if (!proceed) {
+      statusEl.textContent = 'Salvamento cancelado.';
+      statusEl.className = 'status';
+      return;
+    }
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = fileName;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+    statusEl.textContent = 'Download iniciado na pasta padrão (Downloads). Se quiser substituir, mova ou renomeie no Finder e salve novamente.';
+    statusEl.className = 'status ok';
+  }
+
+  let autoOpenFileRequested = false;
+  let lastCompanyName = '';
+
+  function clearAllExceptCompany(){
+    fieldIds.forEach(id => {
+      if (id !== 'companyName' && id !== 'revisionDate') {
+        byId(id).value = '';
+      }
+    });
+    builtText = '';
+    resultBox.textContent = '';
+    resultWrap.classList.remove('show');
+    statusEl.textContent = 'Campos limpos. Abra um arquivo ou continue preenchendo.';
+    statusEl.className = 'status';
+    updateSummary();
+    renderStepState();
+  }
+
+  function promptOpenExercise(){
+    if (autoOpenFileRequested) return;
+    autoOpenFileRequested = true;
+    statusEl.textContent = 'Abrindo navegador de arquivos para buscar 7Perguntas...';
+    statusEl.className = 'status';
+    if (window.api && window.api.openFile) {
+      window.api.openFile().then(result => {
+        autoOpenFileRequested = false;
+        if (!result) return;
+        if (result.error) {
+          statusEl.textContent = 'Erro ao abrir arquivo: ' + result.error;
+          statusEl.className = 'status err';
+          return;
+        }
+        if (result.content) loadExerciseFromText(result.content);
+      });
+    } else {
+      byId('previousFile').click();
+    }
+  }
+
+  function loadExercise(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (typeof data !== 'object' || data === null) throw new Error('Formato inválido');
+        fieldIds.forEach(id => {
+          if (typeof data[id] === 'string') byId(id).value = data[id];
+        });
+        byId('companyName').value = data.companyName || byId('companyName').value;
+        byId('revisionDate').value = data.revisionDate || byId('revisionDate').value;
+        autoOpenFileRequested = false;
+        updateSummary();
+        renderStepState();
+        statusEl.textContent = 'Exercício carregado. Revise os campos antes de montar.';
+        statusEl.className = 'status ok';
+      } catch (error) {
+        statusEl.textContent = 'Arquivo inválido. Use um exercício JSON exportado pelo programa.';
+        statusEl.className = 'status err';
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function loadExerciseFromText(text){
+    try {
+      const data = JSON.parse(text);
+      if (typeof data !== 'object' || data === null) throw new Error('Formato inválido');
+      fieldIds.forEach(id => {
+        if (typeof data[id] === 'string') byId(id).value = data[id];
+      });
+      byId('companyName').value = data.companyName || byId('companyName').value;
+      byId('revisionDate').value = data.revisionDate || byId('revisionDate').value;
+      autoOpenFileRequested = false;
+      updateSummary();
+      renderStepState();
+      statusEl.textContent = 'Exercício carregado. Revise os campos antes de montar.';
+      statusEl.className = 'status ok';
+    } catch (error) {
+      statusEl.textContent = 'Arquivo inválido. Use um exercício JSON exportado pelo programa.';
+      statusEl.className = 'status err';
+    }
+  }
+
+  document.getElementById('stepNav').addEventListener('click', (event) => {
+    const button = event.target.closest('.step-btn');
+    if (!button) return;
+    showStep(Number(button.dataset.step));
+  });
+
+  document.querySelectorAll('[data-fill]').forEach(button => {
+    button.addEventListener('click', () => {
+      const field = byId(button.dataset.fill);
+      const current = field.value.trim();
+      const addition = button.textContent.trim();
+      field.value = current ? current + (current.endsWith('.') ? ' ' : '\n') + addition : addition;
+      updateSummary();
+      saveDraft(false);
+    });
+  });
+
+  fieldIds.forEach(id => {
+    byId(id).addEventListener('input', () => {
+      updateSummary();
+      saveDraft(false);
+      renderStepState();
+      if (id === 'companyName') {
+        const company = valueOf('companyName');
+        if (company && company !== lastCompanyName) {
+          lastCompanyName = company;
+          clearAllExceptCompany();
+          promptOpenExercise();
+        }
+      }
+    });
+  });
+
+  document.getElementById('openFileBtn').addEventListener('click', () => {
+    if (window.api && window.api.openFile) {
+      window.api.openFile().then(result => {
+        if (!result) return;
+        if (result.error) {
+          statusEl.textContent = 'Erro ao abrir arquivo: ' + result.error;
+          statusEl.className = 'status err';
+          return;
+        }
+        if (result.content) loadExerciseFromText(result.content);
+      });
+    } else {
+      byId('previousFile').click();
+    }
+  });
+  document.getElementById('previousFile').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) loadExercise(file);
+    event.target.value = '';
+  });
+
+  byId('prevBtn').addEventListener('click', () => showStep(currentStep - 1));
+  byId('nextBtn').addEventListener('click', () => showStep(currentStep + 1));
+  byId('buildBtn').addEventListener('click', assembleText);
+  byId('resetBtn').addEventListener('click', clearAll);
+  byId('saveBtn').addEventListener('click', () => saveDraft(true));
+  saveFileBtn.addEventListener('click', saveExerciseToFile);
+  byId('copyBtn').addEventListener('click', copyText);
+  byId('downloadBtn').addEventListener('click', saveExerciseToFile);
+  document.getElementById('closeBtn').addEventListener('click', () => {
+    const savedRaw = localStorage.getItem(storageKey);
+    const current = fieldIds.reduce((acc, id) => { acc[id] = valueOf(id); return acc; }, {});
+    const currentObj = { currentStep, builtText, ...current };
+    let savedObj = null;
+    try { savedObj = savedRaw ? JSON.parse(savedRaw) : null; } catch (e) { savedObj = null; }
+    const isEqual = savedObj && Object.keys(currentObj).every(k => {
+      return (savedObj[k] || '') === (currentObj[k] || '');
+    });
+    if (isEqual) {
+      try { window.close(); } catch (e) { statusEl.textContent = 'Fechar: sem alterações. Use o botão do navegador.'; }
+      return;
+    }
+    const ok = confirm('Existem mudanças não salvas. Sair sem salvar?');
+    if (ok) {
+      try { window.close(); } catch (e) { statusEl.textContent = 'Janela não pode ser fechada pelo navegador. Nenhuma alteração salva.'; }
+    }
+  });
+
+  loadDraft();
+  updateSummary();
+  showStep(currentStep);
+</script>
+</body>
+</html>
